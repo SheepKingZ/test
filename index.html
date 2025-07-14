@@ -3,120 +3,329 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECharts 示例</title>
+    <title>ECharts 综合示例</title>
     <style>
         body {
             margin: 0;
             padding: 20px;
-            font-family: Arial, sans-serif;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
         }
-        #main {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .chart {
             width: 100%;
-            height: 600px;
+            height: 400px;
+        }
+        .full-width {
+            width: 100%;
+        }
+        h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div id="main"></div>
+    <div class="container">
+        <h1 style="text-align: center; color: #333;">ECharts 数据可视化示例</h1>
+        
+        <div class="chart-row">
+            <div class="chart-container">
+                <h2>柱状图 - 销售数据</h2>
+                <div id="barChart" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h2>饼图 - 市场份额</h2>
+                <div id="pieChart" class="chart"></div>
+            </div>
+        </div>
+        
+        <div class="chart-row">
+            <div class="chart-container full-width">
+                <h2>折线图 - 趋势分析</h2>
+                <div id="lineChart" class="chart"></div>
+            </div>
+        </div>
+        
+        <div class="chart-row">
+            <div class="chart-container">
+                <h2>散点图 - 相关性分析</h2>
+                <div id="scatterChart" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h2>雷达图 - 能力评估</h2>
+                <div id="radarChart" class="chart"></div>
+            </div>
+        </div>
+    </div>
     
     <!-- 引入 ECharts -->
-    <script src="echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.0/dist/echarts.min.js"></script>
     
     <script>
-        var chartDom = document.getElementById('main');
-        var myChart = echarts.init(chartDom);
-        var option;
-
-        setTimeout(function () {
-            option = {
-                legend: {},
+        // 柱状图
+        function initBarChart() {
+            const chartDom = document.getElementById('barChart');
+            const myChart = echarts.init(chartDom);
+            
+            const option = {
                 tooltip: {
                     trigger: 'axis',
-                    showContent: false
+                    axisPointer: {
+                        type: 'shadow'
+                    }
                 },
-                dataset: {
-                    source: [
-                        ['product','1980','1985', '1990','1995','2000','2005','2010','2015','2020'],
-                        ['第一产业产值/万元',62438,120449,257288,734606,943718,1302159,1686203,2065218,2862680],
-                        ['第二产业产值/万元',313734,658130,1362975,5787475,10299412,20670012,40532998,57771661,67161603],
-                        ['第三产业产值/万元',199325,465044,1575689,6081016,13812664,29906295,64187541,113636845,180663208]
-                    ]
+                legend: {
+                    data: ['2022年', '2023年']
                 },
-                xAxis: { type: 'category' },
-                yAxis: { gridIndex: 0 },
-                grid: { top: '55%' },
+                xAxis: {
+                    type: 'category',
+                    data: ['一月', '二月', '三月', '四月', '五月', '六月']
+                },
+                yAxis: {
+                    type: 'value'
+                },
                 series: [
                     {
-                        type: 'line',
-                        smooth: true,
-                        seriesLayoutBy: 'row',
-                        emphasis: { focus: 'series' }
+                        name: '2022年',
+                        type: 'bar',
+                        data: [320, 302, 301, 334, 390, 330],
+                        itemStyle: {
+                            color: '#5470c6'
+                        }
                     },
                     {
-                        type: 'line',
-                        smooth: true,
-                        seriesLayoutBy: 'row',
-                        emphasis: { focus: 'series' }
-                    },
-                    {
-                        type: 'line',
-                        smooth: true,
-                        seriesLayoutBy: 'row',
-                        emphasis: { focus: 'series' }
-                    },
-                    {
-                        type: 'line',
-                        smooth: true,
-                        seriesLayoutBy: 'row',
-                        emphasis: { focus: 'series' }
-                    },
-                    {
-                        type: 'pie',
-                        id: 'pie',
-                        radius: '30%',
-                        center: ['50%', '25%'],
-                        emphasis: {
-                            focus: 'self'
-                        },
-                        label: {
-                            formatter: '{b}: {@2012} ({d}%)'
-                        },
-                        encode: {
-                            itemName: 'product',
-                            value: '2012',
-                            tooltip: '2012'
+                        name: '2023年',
+                        type: 'bar',
+                        data: [420, 382, 381, 414, 490, 430],
+                        itemStyle: {
+                            color: '#91cc75'
                         }
                     }
                 ]
             };
             
-            myChart.on('updateAxisPointer', function (event) {
-                const xAxisInfo = event.axesInfo[0];
-                if (xAxisInfo) {
-                    const dimension = xAxisInfo.value + 1;
-                    myChart.setOption({
-                        series: {
-                            id: 'pie',
-                            label: {
-                                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-                            },
-                            encode: {
-                                value: dimension,
-                                tooltip: dimension
+            myChart.setOption(option);
+            return myChart;
+        }
+        
+        // 饼图
+        function initPieChart() {
+            const chartDom = document.getElementById('pieChart');
+            const myChart = echarts.init(chartDom);
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: '市场份额',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [
+                            { value: 335, name: '产品A' },
+                            { value: 310, name: '产品B' },
+                            { value: 234, name: '产品C' },
+                            { value: 135, name: '产品D' },
+                            { value: 1548, name: '产品E' }
+                        ],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
                             }
                         }
-                    });
-                }
-            });
+                    }
+                ]
+            };
             
             myChart.setOption(option);
-        });
-
-        option && myChart.setOption(option);
+            return myChart;
+        }
         
-        // 窗口大小改变时重新调整图表大小
+        // 折线图
+        function initLineChart() {
+            const chartDom = document.getElementById('lineChart');
+            const myChart = echarts.init(chartDom);
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['访问量', '注册量', '购买量']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name: '访问量',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [120, 132, 101, 134, 90, 230, 210],
+                        smooth: true
+                    },
+                    {
+                        name: '注册量',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [220, 182, 191, 234, 290, 330, 310],
+                        smooth: true
+                    },
+                    {
+                        name: '购买量',
+                        type: 'line',
+                        stack: 'Total',
+                        data: [150, 232, 201, 154, 190, 330, 410],
+                        smooth: true
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+            return myChart;
+        }
+        
+        // 散点图
+        function initScatterChart() {
+            const chartDom = document.getElementById('scatterChart');
+            const myChart = echarts.init(chartDom);
+            
+            const data = [];
+            for (let i = 0; i < 50; i++) {
+                data.push([
+                    Math.random() * 100,
+                    Math.random() * 100,
+                    Math.random() * 40
+                ]);
+            }
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: 'X: {c[0]}<br/>Y: {c[1]}<br/>大小: {c[2]}'
+                },
+                xAxis: {
+                    type: 'value',
+                    name: 'X轴'
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Y轴'
+                },
+                series: [
+                    {
+                        type: 'scatter',
+                        data: data,
+                        symbolSize: function(data) {
+                            return data[2];
+                        },
+                        itemStyle: {
+                            color: '#fac858'
+                        }
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+            return myChart;
+        }
+        
+        // 雷达图
+        function initRadarChart() {
+            const chartDom = document.getElementById('radarChart');
+            const myChart = echarts.init(chartDom);
+            
+            const option = {
+                tooltip: {},
+                legend: {
+                    data: ['员工A', '员工B']
+                },
+                radar: {
+                    indicator: [
+                        { name: '技术能力', max: 100 },
+                        { name: '沟通能力', max: 100 },
+                        { name: '学习能力', max: 100 },
+                        { name: '团队协作', max: 100 },
+                        { name: '执行力', max: 100 },
+                        { name: '创新能力', max: 100 }
+                    ]
+                },
+                series: [
+                    {
+                        name: '能力评估',
+                        type: 'radar',
+                        data: [
+                            {
+                                value: [80, 90, 85, 92, 88, 78],
+                                name: '员工A'
+                            },
+                            {
+                                value: [85, 75, 90, 80, 85, 85],
+                                name: '员工B'
+                            }
+                        ]
+                    }
+                ]
+            };
+            
+            myChart.setOption(option);
+            return myChart;
+        }
+        
+        // 初始化所有图表
+        const charts = [];
+        
+        window.addEventListener('load', function() {
+            charts.push(initBarChart());
+            charts.push(initPieChart());
+            charts.push(initLineChart());
+            charts.push(initScatterChart());
+            charts.push(initRadarChart());
+        });
+        
+        // 窗口大小改变时重新调整所有图表大小
         window.addEventListener('resize', function() {
-            myChart.resize();
+            charts.forEach(chart => {
+                if (chart) {
+                    chart.resize();
+                }
+            });
         });
     </script>
 </body>

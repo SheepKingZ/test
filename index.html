@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts 示例</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        #main {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div id="main"></div>
+    
+    <!-- 引入 ECharts -->
+    <script src="echarts.min.js"></script>
+    
+    <script>
+        var chartDom = document.getElementById('main');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        setTimeout(function () {
+            option = {
+                legend: {},
+                tooltip: {
+                    trigger: 'axis',
+                    showContent: false
+                },
+                dataset: {
+                    source: [
+                        ['product','1980','1985', '1990','1995','2000','2005','2010','2015','2020'],
+                        ['第一产业产值/万元',62438,120449,257288,734606,943718,1302159,1686203,2065218,2862680],
+                        ['第二产业产值/万元',313734,658130,1362975,5787475,10299412,20670012,40532998,57771661,67161603],
+                        ['第三产业产值/万元',199325,465044,1575689,6081016,13812664,29906295,64187541,113636845,180663208]
+                    ]
+                },
+                xAxis: { type: 'category' },
+                yAxis: { gridIndex: 0 },
+                grid: { top: '55%' },
+                series: [
+                    {
+                        type: 'line',
+                        smooth: true,
+                        seriesLayoutBy: 'row',
+                        emphasis: { focus: 'series' }
+                    },
+                    {
+                        type: 'line',
+                        smooth: true,
+                        seriesLayoutBy: 'row',
+                        emphasis: { focus: 'series' }
+                    },
+                    {
+                        type: 'line',
+                        smooth: true,
+                        seriesLayoutBy: 'row',
+                        emphasis: { focus: 'series' }
+                    },
+                    {
+                        type: 'line',
+                        smooth: true,
+                        seriesLayoutBy: 'row',
+                        emphasis: { focus: 'series' }
+                    },
+                    {
+                        type: 'pie',
+                        id: 'pie',
+                        radius: '30%',
+                        center: ['50%', '25%'],
+                        emphasis: {
+                            focus: 'self'
+                        },
+                        label: {
+                            formatter: '{b}: {@2012} ({d}%)'
+                        },
+                        encode: {
+                            itemName: 'product',
+                            value: '2012',
+                            tooltip: '2012'
+                        }
+                    }
+                ]
+            };
+            
+            myChart.on('updateAxisPointer', function (event) {
+                const xAxisInfo = event.axesInfo[0];
+                if (xAxisInfo) {
+                    const dimension = xAxisInfo.value + 1;
+                    myChart.setOption({
+                        series: {
+                            id: 'pie',
+                            label: {
+                                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                            },
+                            encode: {
+                                value: dimension,
+                                tooltip: dimension
+                            }
+                        }
+                    });
+                }
+            });
+            
+            myChart.setOption(option);
+        });
+
+        option && myChart.setOption(option);
+        
+        // 窗口大小改变时重新调整图表大小
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    </script>
+</body>
+</html>
